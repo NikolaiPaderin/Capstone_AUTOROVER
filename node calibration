@@ -1,0 +1,100 @@
+import math
+
+
+def calibrated_angle_from_north(point1, point2):
+    # Calculate the difference in longitude (east-west direction)
+    delta_longitude = point2[1] - point1[1]
+
+    # Calculate the difference in latitude (north-south direction)
+    delta_latitude = point2[0] - point1[0]
+
+    # Calculate the angle in radians using arctan2
+    angle_radians = math.atan2(delta_longitude, delta_latitude)
+
+    # Convert the angle from radians to degrees
+    angle_degrees = math.degrees(angle_radians)
+
+    # Ensure the angle is between 0 and 360 degrees
+    calibrated_angle = (angle_degrees + 360) % 360
+
+    return calibrated_angle
+
+
+def adjust_angle(point1, point2, prev_angle):
+    delta_longitude = point2[1] - point1[1]
+
+    # Calculate the difference in latitude (north-south direction)
+    delta_latitude = point2[0] - point1[0]
+
+    # Calculate the angle in radians using arctan2
+    angle_radians = math.atan2(delta_longitude, delta_latitude)
+
+    # Convert the angle from radians to degrees
+    angle_degrees = math.degrees(angle_radians)
+
+    # Ensure the angle is between 0 and 360 degrees
+    calibrated_angle = (angle_degrees + 360) % 360
+
+    calibrated_angle -= prev_angle
+
+    return calibrated_angle
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    # Radius of the Earth in meters
+    earth_radius = 6371000  # meters
+
+    # Convert latitude and longitude from degrees to radians
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    # Haversine formula
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+    a = math.sin(dlat/2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = earth_radius * c
+
+    return distance
+
+def get_location():
+    
+    url = 'https://ipapi.co/json/'
+    response = requests.get(url)
+    data = response.json()
+
+    latitude = data.get('latitude', 'N/A')
+    longitude = data.get('longitude', 'N/A')
+    x[0] = latitude
+    x[1] = longitude
+    print("Latitude:", latitude)
+    print("Longitude:", longitude)
+    return x
+
+
+def turn(angle):
+    if(angle<0):
+        ###turn left by angle
+    else:
+        ###turn right by angle
+    return 0
+def move(x):
+    ##move x distance forward/backward
+    return 0
+def get_node_next():
+    return node
+def calibrate():
+    point1 = get_location()
+    move()
+    point2 = get_location()
+    angle = calibrated_angle_from_north(point1, point2)
+    next_node = get_node_next()
+    point1 = point2
+    point2 = next_node
+    new_angle = adjust_angle(point1, point2, angle)
+    turn(new_angle)
+    distance = haversine_distance(point1[0], point1[1], point2[0], point2[1])
+    move(distance)
+    ##put in a while loop such that it can iterate through a list of nodes and move towards each of them after each segment.
